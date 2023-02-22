@@ -60,6 +60,7 @@ router.post("/login", (req, res) => {
           if (matchedCredentials) {
             const jwtToken = jwt.sign({ _id: userInDB._id }, JWT_SECRET);
             const userInfo = {
+              _id: userInDB._id,
               email: userInDB.email,
               fullName: userInDB.fullName,
             };
