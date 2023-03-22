@@ -39,7 +39,7 @@ router.post("/uploadFile", upload.single("file"), function (req, res) {
 
 const downloadFile = (req, res) => {
   const fileName = req.params.filename;
-  const path = __basedir + "/uploads";
+  const path = __basedir + "/uploads/";
 
   res.download(path + fileName, (error) => {
     if (error) {

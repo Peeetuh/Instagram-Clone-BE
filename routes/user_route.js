@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const UserModel = mongoose.model("UserModel");
 const { JWT_SECRET } = require("../config");
+const protectedRoute = require("../middleware/protectedRoutes");
 
 router.post("/signup", (req, res) => {
   const { fullName, email, password, profileImg } = req.body;
@@ -63,8 +64,8 @@ router.post("/login", (req, res) => {
               _id: userInDB._id,
               email: userInDB.email,
               fullName: userInDB.fullName,
+              profileImg: userInDB.profileImg,
             };
-
             res
               .status(200)
               .json({ result: { token: jwtToken, user: userInfo } });
@@ -78,6 +79,28 @@ router.post("/login", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+    });
+});
+
+router.put("/users/:id/bio", protectedRoute, (req, res) => {
+  const { bio } = req.body;
+  if (!bio) {
+    return res
+      .status(400)
+      .json({ error: "One or more mandatory fields are invalid or empty" });
+  }
+
+  UserModel.findOneAndUpdate(
+    { _id: req.user._id },
+    { $set: { bio: bio } },
+    { new: true }
+  )
+    .then((updatedUser) => {
+      res.status(200).json({ user: updatedUser });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Server error" });
     });
 });
 

@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const PostModel = mongoose.model("PostModel");
+const UserModel = mongoose.model("UserModel");
 const protectedRoute = require("../middleware/protectedRoutes");
 
 //all users posts
 router.get("/allposts", (req, res) => {
   PostModel.find()
     .populate("author", "_id fullName profileImg")
+    .populate("comments.commentedBy", "_id fullName")
     .then((dbPosts) => {
       res.status(200).json({ posts: dbPosts });
     })
@@ -51,6 +53,51 @@ router.post("/createpost", protectedRoute, (req, res) => {
       console.log(error);
     });
 });
+
+router.patch("/updateProfileImg", protectedRoute, (req, res) => {
+  console.log(req.body);
+  const { profileImg } = req.body;
+  console.log(profileImg);
+  if (!profileImg) {
+    return res
+      .status(400)
+      .json({ error: "One or more mandatory fields are invalid or empty" });
+  }
+  UserModel.findOneAndUpdate(
+    { _id: req.user._id },
+    { $set: { profileImg: profileImg } },
+    { new: true }
+  )
+    .then((updatedUser) => {
+      res.status(200).json({ user: updatedUser });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
+    });
+});
+
+//delete without id
+// router.delete("/deletepost/:postId", (req, res) => {
+//   PostModel.findOne({ _id: req.params.postId })
+//     .populate("author", "_id")
+//     .exec((error, postFound) => {
+//       if (error || !postFound) {
+//         return res.status(400).json({ error: "Post was not found." });
+//       }
+//       //check if the post author is the same as loggedin user, only then we allow deletion.
+//       if (postFound.author._id.toString() === req.user._id.toString()) {
+//         postFound
+//           .remove()
+//           .then((data) => {
+//             res.status(200).json({ result: data });
+//           })
+//           .catch((error) => {
+//             console.log(error);
+//           });
+//       }
+//     });
+// });
 
 router.delete("/deletepost/:postId", protectedRoute, (req, res) => {
   PostModel.findOne({ _id: req.params.postId })

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema.Types;
+const { ObjectId } = mongoose.Schema.Types; // represents a unique identifier for a document stored in the DB.
 
 const postSchema = new mongoose.Schema({
   description: {
@@ -33,3 +33,5 @@ const postSchema = new mongoose.Schema({
 });
 
 mongoose.model("PostModel", postSchema);
+
+//structure what will be stored in a post.
