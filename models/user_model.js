@@ -21,9 +21,23 @@ const userSchema = new mongoose.Schema({
   },
   bio: {
     type: String,
-    required: false,
+    required: true,
     default: "Edit your bio by clicking Edit profile!",
   },
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserModel",
+      default: [],
+    },
+  ],
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserModel",
+      default: [],
+    },
+  ],
 });
 
 mongoose.model("UserModel", userSchema);
