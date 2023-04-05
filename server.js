@@ -1,7 +1,8 @@
 const express = require("express");
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 const app = express();
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { MONGODB_URL } = require("./config");
 
@@ -21,6 +22,7 @@ require("./models/post_model");
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 
 app.use(require("./routes/user_route"));
 app.use(require("./routes/post_route"));
