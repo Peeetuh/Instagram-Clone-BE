@@ -24,11 +24,12 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => res.type('html').send("hello world"));
 
+app.get("/", (req, res) => res.type('html').send("Home page accessed"));
 app.use(require("./routes/user_route"));
 app.use(require("./routes/post_route"));
 app.use(require("./routes/file_route"));
+
 
 app.listen(PORT, () => {
   console.log("Server listening");
